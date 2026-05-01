@@ -10,7 +10,7 @@ import jakarta.persistence.*;
  * @Table(name="Patients") maps to exact table name.
  */
 @Entity
-@Table(name = "Patients")
+@Table(name = "patients")
 public class Patient {
 
     // PRIMARY KEY - auto incremented by MySQL

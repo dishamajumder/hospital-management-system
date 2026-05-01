@@ -6,7 +6,7 @@ import jakarta.persistence.*;
  * User entity for authentication and authorization
  */
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class User {
 
     @Id

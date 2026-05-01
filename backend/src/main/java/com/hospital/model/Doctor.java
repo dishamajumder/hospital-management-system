@@ -8,7 +8,7 @@ import jakarta.persistence.*;
  * Maps to the 'Doctors' table in MySQL.
  */
 @Entity
-@Table(name = "Doctors")
+@Table(name = "doctors")
 public class Doctor {
 
     @Id

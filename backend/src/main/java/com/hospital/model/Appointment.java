@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * Links Patients and Doctors via foreign keys.
  */
 @Entity
-@Table(name = "Appointments")
+@Table(name = "appointments")
 public class Appointment {
 
     @Id

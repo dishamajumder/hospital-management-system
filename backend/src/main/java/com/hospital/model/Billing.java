@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  * Handles financial records for patients.
  */
 @Entity
-@Table(name = "Billing")
+@Table(name = "billing")
 public class Billing {
 
     @Id

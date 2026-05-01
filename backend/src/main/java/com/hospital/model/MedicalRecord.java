@@ -9,7 +9,7 @@ import jakarta.persistence.*;
  * Each record is tied to one appointment (one-to-one via appointment_id UNIQUE).
  */
 @Entity
-@Table(name = "Medical_Records")
+@Table(name = "medical_records")
 public class MedicalRecord {
 
     @Id
