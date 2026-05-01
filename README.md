@@ -118,6 +118,20 @@ mvn spring-boot:run
 - If you see `[]` (empty array) → Backend is working!
 - If you see your patient data → Even better!
 
+### STEP 4.1: Backend environment variables for deployment
+
+For deployment, set these env vars in your hosting provider:
+
+```bash
+SPRING_DATASOURCE_URL=jdbc:mysql://<HOST>:<PORT>/<DB_NAME>?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+SPRING_DATASOURCE_USERNAME=<DB_USER>
+SPRING_DATASOURCE_PASSWORD=<DB_PASS>
+APP_JWT_SECRET=<YOUR_JWT_SECRET>
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+```
+
+If these are not provided, the backend will still work locally using default localhost/MySQL values.
+
 ---
 
 ### STEP 5: Run the React Frontend

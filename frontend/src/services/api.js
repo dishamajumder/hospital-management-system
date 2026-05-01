@@ -8,9 +8,9 @@
 import axios from 'axios';
 
 // Create Axios instance with base URL
-// This means every call automatically prepends http://127.0.0.1:8080/api
+// This means every call automatically prepends the deployed backend URL configured in environment variables.
 const API = axios.create({
-  baseURL: 'http://127.0.0.1:8080/api',
+  baseURL: `${process.env.REACT_APP_API_URL || 'http://127.0.0.1:8080'}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
