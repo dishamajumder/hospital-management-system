@@ -36,6 +36,9 @@ public class BillingService {
         return billingRepository.findByPaymentStatus("Pending");
     }
 
+    @Autowired
+    private SmsNotificationService smsNotificationService;
+
     /**
      * Generate a new bill for a patient
      * Business rules:
@@ -45,9 +48,8 @@ public class BillingService {
      */
     public Billing generateBill(Billing billing) {
         // Validate patient exists
-        if (!patientRepository.existsById(billing.getPatientId())) {
-            throw new RuntimeException("Patient not found with ID: " + billing.getPatientId());
-        }
+        com.hospital.model.Patient patient = patientRepository.findById(billing.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + billing.getPatientId()));
 
         // Business rule: amount cannot be negative
         if (billing.getAmount() == null || billing.getAmount().compareTo(BigDecimal.ZERO) < 0) {
@@ -62,7 +64,15 @@ public class BillingService {
             billing.setBillDate(LocalDate.now().toString()); // Today's date
         }
 
-        return billingRepository.save(billing);
+        Billing savedBill = billingRepository.save(billing);
+
+        // Send SMS
+        smsNotificationService.sendSms(
+                patient.getPhone(),
+                "Hello " + patient.getFirstName() + ", a new bill of Rs." + savedBill.getAmount() + " has been generated at Disha Hospital. Status: " + savedBill.getPaymentStatus()
+        );
+
+        return savedBill;
     }
 
     /**
@@ -72,6 +82,17 @@ public class BillingService {
         Billing bill = billingRepository.findById(billId)
                 .orElseThrow(() -> new RuntimeException("Bill not found with ID: " + billId));
         bill.setPaymentStatus("Paid");
-        return billingRepository.save(bill);
+        
+        Billing updatedBill = billingRepository.save(bill);
+
+        // Get patient and send SMS
+        patientRepository.findById(bill.getPatientId()).ifPresent(patient -> {
+            smsNotificationService.sendSms(
+                    patient.getPhone(),
+                    "Hello " + patient.getFirstName() + ", your payment of Rs." + updatedBill.getAmount() + " has been received successfully. Thank you for choosing Disha Hospital."
+            );
+        });
+
+        return updatedBill;
     }
 }

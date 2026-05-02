@@ -1,6 +1,7 @@
 // pages/DoctorsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { doctorAPI } from '../services/api';
+import { Users, UserPlus, X, Plus, Save, ClipboardList, UserSearch, Trash2 } from 'lucide-react';
 
 function DoctorsPage() {
   const [doctors, setDoctors] = useState([]);
@@ -29,12 +30,12 @@ function DoctorsPage() {
     }
     try {
       await doctorAPI.add(form);
-      showMsg('✅ Doctor added successfully!', 'success');
+      showMsg('Doctor added successfully!', 'success');
       setForm({ name: '', specialization: '', email: '', phone: '' });
       setShowForm(false);
       fetchDoctors();
     } catch (err) {
-      showMsg('❌ ' + (err.response?.data?.error || 'Failed to add doctor'), 'error');
+      showMsg((err.response?.data?.error || 'Failed to add doctor'), 'error');
     }
   };
 
@@ -42,9 +43,9 @@ function DoctorsPage() {
     if (!window.confirm(`Remove Dr. ${name}?`)) return;
     try {
       await doctorAPI.delete(id);
-      showMsg('✅ Doctor removed', 'success');
+      showMsg('Doctor removed', 'success');
       fetchDoctors();
-    } catch { showMsg('❌ Failed to delete', 'error'); }
+    } catch { showMsg('Failed to delete', 'error'); }
   };
 
   const showMsg = (text, type) => { setMessage({ text, type }); setTimeout(() => setMessage(null), 4000); };
@@ -54,7 +55,7 @@ function DoctorsPage() {
 
   return (
     <div>
-      <h1 className="page-title">👨‍⚕️ Doctor Management</h1>
+      <h1 className="page-title"><Users size={28} /> Doctor Management</h1>
 
       <div className="stats-grid">
         <div className="stat-card">
@@ -71,9 +72,9 @@ function DoctorsPage() {
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showForm ? '20px' : '0' }}>
-          <div className="card-title">➕ {showForm ? 'Add New Doctor' : 'Register a Doctor'}</div>
+          <div className="card-title"><UserPlus size={20} /> {showForm ? 'Add New Doctor' : 'Register a Doctor'}</div>
           <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? '✕ Cancel' : '+ Add Doctor'}
+            {showForm ? <><X size={18} /> Cancel</> : <><Plus size={18} /> Add Doctor</>}
           </button>
         </div>
 
@@ -97,15 +98,15 @@ function DoctorsPage() {
                 <input name="phone" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="10-digit number" required />
               </div>
             </div>
-            <button type="submit" className="btn btn-success">💾 Save Doctor</button>
+            <button type="submit" className="btn btn-success"><Save size={18} /> Save Doctor</button>
           </form>
         )}
       </div>
 
       <div className="card">
-        <div className="card-title">📋 Registered Doctors</div>
+        <div className="card-title"><ClipboardList size={20} /> Registered Doctors</div>
         {loading ? <div className="loading">Loading...</div> : doctors.length === 0 ? (
-          <div className="empty-state"><div className="empty-icon">👨‍⚕️</div><p>No doctors registered yet.</p></div>
+          <div className="empty-state"><div className="empty-icon"><UserSearch size={48} /></div><p>No doctors registered yet.</p></div>
         ) : (
           <div className="table-wrapper">
             <table>
@@ -120,7 +121,7 @@ function DoctorsPage() {
                     <td><span className="badge badge-info">{d.specialization}</span></td>
                     <td>{d.email}</td>
                     <td>{d.phone}</td>
-                    <td><button className="btn btn-danger btn-sm" onClick={() => handleDelete(d.doctorId, d.name)}>🗑 Delete</button></td>
+                    <td><button className="btn btn-danger btn-sm" onClick={() => handleDelete(d.doctorId, d.name)}><Trash2 size={16} /> Delete</button></td>
                   </tr>
                 ))}
               </tbody>

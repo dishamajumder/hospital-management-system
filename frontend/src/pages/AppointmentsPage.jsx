@@ -1,6 +1,7 @@
 // pages/AppointmentsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { appointmentAPI, patientAPI, doctorAPI } from '../services/api';
+import { Calendar, Plus, X, ClipboardList, CheckCircle, CalendarX, CalendarClock } from 'lucide-react';
 
 function AppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
@@ -38,21 +39,21 @@ function AppointmentsPage() {
     }
     try {
       await appointmentAPI.book({ ...form, patientId: parseInt(form.patientId), doctorId: form.doctorId ? parseInt(form.doctorId) : null });
-      showMsg('✅ Appointment booked!', 'success');
+      showMsg('Appointment booked!', 'success');
       setForm({ patientId: '', doctorId: '', appointmentDate: '', status: 'Scheduled' });
       setShowForm(false);
       fetchAll();
     } catch (err) {
-      showMsg('❌ ' + (err.response?.data?.error || 'Failed to book'), 'error');
+      showMsg((err.response?.data?.error || 'Failed to book'), 'error');
     }
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
     try {
       await appointmentAPI.updateStatus(id, newStatus);
-      showMsg(`✅ Status updated to ${newStatus}`, 'success');
+      showMsg(`Status updated to ${newStatus}`, 'success');
       fetchAll();
-    } catch { showMsg('❌ Failed to update status', 'error'); }
+    } catch { showMsg('Failed to update status', 'error'); }
   };
 
   const showMsg = (text, type) => { setMessage({ text, type }); setTimeout(() => setMessage(null), 4000); };
@@ -71,7 +72,7 @@ function AppointmentsPage() {
 
   return (
     <div>
-      <h1 className="page-title">📅 Appointments</h1>
+      <h1 className="page-title"><Calendar size={28} /> Appointments</h1>
 
       <div className="stats-grid">
         {[['Total', stats.total, '#1a73e8'], ['Scheduled', stats.scheduled, '#f9a825'], ['Completed', stats.completed, '#34a853'], ['Cancelled', stats.cancelled, '#ea4335']].map(([label, val, color]) => (
@@ -86,8 +87,10 @@ function AppointmentsPage() {
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showForm ? '20px' : '0' }}>
-          <div className="card-title">➕ Book Appointment</div>
-          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>{showForm ? '✕ Cancel' : '+ Book'}</button>
+          <div className="card-title"><CalendarClock size={20} /> Book Appointment</div>
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+            {showForm ? <><X size={18} /> Cancel</> : <><Plus size={18} /> Book</>}
+          </button>
         </div>
         {showForm && (
           <form onSubmit={handleSubmit}>
@@ -119,15 +122,15 @@ function AppointmentsPage() {
                 </select>
               </div>
             </div>
-            <button type="submit" className="btn btn-success">📅 Book Appointment</button>
+            <button type="submit" className="btn btn-success"><CalendarClock size={18} /> Book Appointment</button>
           </form>
         )}
       </div>
 
       <div className="card">
-        <div className="card-title">📋 All Appointments</div>
+        <div className="card-title"><ClipboardList size={20} /> All Appointments</div>
         {loading ? <div className="loading">Loading...</div> : appointments.length === 0 ? (
-          <div className="empty-state"><div className="empty-icon">📅</div><p>No appointments yet.</p></div>
+          <div className="empty-state"><div className="empty-icon"><CalendarX size={48} /></div><p>No appointments yet.</p></div>
         ) : (
           <div className="table-wrapper">
             <table>
@@ -143,8 +146,8 @@ function AppointmentsPage() {
                     <td>{a.appointmentDate?.replace('T', ' ')}</td>
                     <td><span className={`badge ${getStatusBadge(a.status)}`}>{a.status}</span></td>
                     <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                      {a.status !== 'Completed' && <button className="btn btn-success btn-sm" onClick={() => handleStatusUpdate(a.appointmentId, 'Completed')}>✅ Complete</button>}
-                      {a.status === 'Scheduled' && <button className="btn btn-danger btn-sm" onClick={() => handleStatusUpdate(a.appointmentId, 'Cancelled')}>✕ Cancel</button>}
+                      {a.status !== 'Completed' && <button className="btn btn-success btn-sm" onClick={() => handleStatusUpdate(a.appointmentId, 'Completed')}><CheckCircle size={16} /> Complete</button>}
+                      {a.status === 'Scheduled' && <button className="btn btn-danger btn-sm" onClick={() => handleStatusUpdate(a.appointmentId, 'Cancelled')}><X size={16} /> Cancel</button>}
                     </td>
                   </tr>
                 ))}

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Hospital } from 'lucide-react';
 
 function LoginPage() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -31,13 +32,22 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>🏥 Hospital Login</h1>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1><Hospital size={32} color="var(--primary-color)" /> Disha Hospital Admin Console</h1>
+          <p>Please login to access the dashboard</p>
+        </div>
 
-      <div style={{ background: 'white', padding: '30px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Username</label>
+        {message && (
+          <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'}`}>
+             {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="form-group">
+            <label>Username</label>
             <input
               type="text"
               name="username"
@@ -45,12 +55,11 @@ function LoginPage() {
               onChange={handleChange}
               placeholder="Enter username"
               required
-              style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '16px' }}
             />
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Password</label>
+          <div className="form-group">
+            <label>Password</label>
             <input
               type="password"
               name="password"
@@ -58,47 +67,27 @@ function LoginPage() {
               onChange={handleChange}
               placeholder="Enter password"
               required
-              style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '16px' }}
             />
           </div>
 
           <button
             type="submit"
+            className="btn btn-primary"
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              background: loading ? '#ccc' : '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
+            style={{ width: '100%', padding: '12px', fontSize: '1rem', marginTop: '10px' }}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Authenticating...' : 'Secure Login'}
           </button>
         </form>
 
-        {message && (
-          <div style={{
-            marginTop: '15px',
-            padding: '10px',
-            borderRadius: '4px',
-            background: message.type === 'success' ? '#d4edda' : '#f8d7da',
-            color: message.type === 'success' ? '#155724' : '#721c24',
-            textAlign: 'center'
-          }}>
-            {message.text}
+        <div className="login-defaults">
+          <p><strong>Demo Credentials:</strong></p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '10px' }}>
+            <span>Admin: admin123</span>
+            <span>Reception: reception123</span>
+            <span>Doctor: doctor123</span>
+            <span>Billing: billing123</span>
           </div>
-        )}
-
-        <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px', color: '#666' }}>
-          <p><strong>Default Users:</strong></p>
-          <p>Admin: admin / admin123</p>
-          <p>Reception: reception / reception123</p>
-          <p>Doctor: doctor / doctor123</p>
-          <p>Billing: billing / billing123</p>
         </div>
       </div>
     </div>

@@ -39,6 +39,9 @@ public class AppointmentService {
         return appointmentRepository.findByStatus(status);
     }
 
+    @Autowired
+    private SmsNotificationService smsNotificationService;
+
     /**
      * Book a new appointment
      * Business rules:
@@ -48,9 +51,8 @@ public class AppointmentService {
      */
     public Appointment bookAppointment(Appointment appointment) {
         // Validate patient exists
-        if (!patientRepository.existsById(appointment.getPatientId())) {
-            throw new RuntimeException("Patient not found with ID: " + appointment.getPatientId());
-        }
+        com.hospital.model.Patient patient = patientRepository.findById(appointment.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + appointment.getPatientId()));
 
         // Validate doctor exists (if doctor_id is provided)
         if (appointment.getDoctorId() != null && !doctorRepository.existsById(appointment.getDoctorId())) {
@@ -62,7 +64,15 @@ public class AppointmentService {
             appointment.setStatus("Scheduled");
         }
 
-        return appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // Send SMS Notification
+        smsNotificationService.sendSms(
+                patient.getPhone(),
+                "Hello " + patient.getFirstName() + ", your appointment at Disha Hospital is confirmed for " + savedAppointment.getAppointmentDate() + ". Status: " + savedAppointment.getStatus()
+        );
+
+        return savedAppointment;
     }
 
     /** Update appointment status (e.g., mark as Completed) */
@@ -70,7 +80,18 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + id));
         appointment.setStatus(status);
-        return appointmentRepository.save(appointment);
+        
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+        // Get patient details for SMS
+        patientRepository.findById(appointment.getPatientId()).ifPresent(patient -> {
+            smsNotificationService.sendSms(
+                    patient.getPhone(),
+                    "Hello " + patient.getFirstName() + ", the status of your appointment #" + updatedAppointment.getAppointmentId() + " has been updated to: " + status
+            );
+        });
+
+        return updatedAppointment;
     }
 
     /** Get appointment by ID */

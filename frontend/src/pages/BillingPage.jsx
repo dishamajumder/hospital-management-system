@@ -1,6 +1,9 @@
 // pages/BillingPage.jsx
 import React, { useState, useEffect } from 'react';
 import { billingAPI, patientAPI } from '../services/api';
+import { CreditCard, Plus, X, Receipt, CheckCircle, Clock, Banknote, FileWarning, Printer } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 function BillingPage() {
   const [bills, setBills] = useState([]);
@@ -28,21 +31,74 @@ function BillingPage() {
     if (parseFloat(form.amount) < 0) { showMsg('Amount cannot be negative!', 'error'); return; }
     try {
       await billingAPI.generate({ ...form, patientId: parseInt(form.patientId), amount: parseFloat(form.amount) });
-      showMsg('✅ Bill generated!', 'success');
+      showMsg('Bill generated!', 'success');
       setForm({ patientId: '', amount: '', paymentStatus: 'Pending', billDate: new Date().toISOString().split('T')[0] });
       setShowForm(false);
       fetchAll();
     } catch (err) {
-      showMsg('❌ ' + (err.response?.data?.error || 'Failed to generate bill'), 'error');
+      showMsg((err.response?.data?.error || 'Failed to generate bill'), 'error');
     }
   };
 
   const handleMarkPaid = async (id) => {
     try {
       await billingAPI.markPaid(id);
-      showMsg('✅ Bill marked as Paid!', 'success');
+      showMsg('Bill marked as Paid!', 'success');
       fetchAll();
-    } catch { showMsg('❌ Failed to update', 'error'); }
+    } catch { showMsg('Failed to update', 'error'); }
+  };
+
+  const generateBillPDF = (bill) => {
+    const doc = new jsPDF();
+    const patientName = getPatientName(bill.patientId);
+    
+    // Header
+    doc.setFontSize(22);
+    doc.setTextColor(99, 102, 241); // Indigo color
+    doc.text("Disha Hospital", 105, 20, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text("Official Payment Receipt", 105, 30, { align: "center" });
+    
+    doc.setLineWidth(0.5);
+    doc.line(20, 35, 190, 35);
+    
+    // Bill Details
+    doc.setTextColor(0);
+    doc.setFontSize(11);
+    doc.text(`Receipt No: #${bill.billId}`, 20, 50);
+    doc.text(`Date: ${bill.billDate}`, 140, 50);
+    
+    doc.text(`Patient Name: ${patientName}`, 20, 60);
+    doc.text(`Patient ID: #${bill.patientId}`, 140, 60);
+
+    // Table
+    autoTable(doc, {
+      startY: 80,
+      head: [['Description', 'Status', 'Amount']],
+      body: [
+        ['Hospital Services & Consultation', bill.paymentStatus, `Rs. ${parseFloat(bill.amount).toFixed(2)}`]
+      ],
+      headStyles: { fillColor: [99, 102, 241] },
+      theme: 'grid'
+    });
+
+    // Total
+    const finalY = doc.lastAutoTable.finalY || 100;
+    doc.setFontSize(14);
+    doc.text(`Total Amount: Rs. ${parseFloat(bill.amount).toFixed(2)}`, 130, finalY + 20);
+    
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text("Thank you for choosing Disha Hospital.", 105, 280, { align: "center" });
+    
+    // Open PDF in a new tab instead of forcing a download
+    // This bypasses browser download manager issues and provides a better UX
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    window.open(blobUrl, '_blank');
   };
 
   const showMsg = (text, type) => { setMessage({ text, type }); setTimeout(() => setMessage(null), 4000); };
@@ -53,7 +109,7 @@ function BillingPage() {
 
   return (
     <div>
-      <h1 className="page-title">💳 Billing & Payments</h1>
+      <h1 className="page-title"><CreditCard size={28} /> Billing & Payments</h1>
 
       <div className="stats-grid">
         <div className="stat-card">
@@ -78,8 +134,10 @@ function BillingPage() {
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showForm ? '20px' : '0' }}>
-          <div className="card-title">➕ Generate Bill</div>
-          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>{showForm ? '✕ Cancel' : '+ Generate Bill'}</button>
+          <div className="card-title"><Receipt size={20} /> Generate Bill</div>
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+            {showForm ? <><X size={18} /> Cancel</> : <><Plus size={18} /> Generate Bill</>}
+          </button>
         </div>
         {showForm && (
           <form onSubmit={handleSubmit}>
@@ -107,15 +165,15 @@ function BillingPage() {
                 <input type="date" value={form.billDate} onChange={e => setForm({...form, billDate: e.target.value})} />
               </div>
             </div>
-            <button type="submit" className="btn btn-success">🧾 Generate Bill</button>
+            <button type="submit" className="btn btn-success"><Receipt size={18} /> Generate Bill</button>
           </form>
         )}
       </div>
 
       <div className="card">
-        <div className="card-title">🧾 All Bills</div>
+        <div className="card-title"><Receipt size={20} /> All Bills</div>
         {loading ? <div className="loading">Loading...</div> : bills.length === 0 ? (
-          <div className="empty-state"><div className="empty-icon">💳</div><p>No bills generated yet.</p></div>
+          <div className="empty-state"><div className="empty-icon"><FileWarning size={48} /></div><p>No bills generated yet.</p></div>
         ) : (
           <div className="table-wrapper">
             <table>
@@ -130,16 +188,19 @@ function BillingPage() {
                     <td><strong>₹{parseFloat(b.amount).toFixed(2)}</strong></td>
                     <td>
                       <span className={`badge ${b.paymentStatus === 'Paid' ? 'badge-success' : 'badge-warning'}`}>
-                        {b.paymentStatus === 'Paid' ? '✅ Paid' : '⏳ Pending'}
+                        {b.paymentStatus === 'Paid' ? <><CheckCircle size={14} style={{marginRight: '4px'}}/> Paid</> : <><Clock size={14} style={{marginRight: '4px'}}/> Pending</>}
                       </span>
                     </td>
                     <td>{b.billDate}</td>
-                    <td>
+                    <td style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {b.paymentStatus === 'Pending' && (
                         <button className="btn btn-success btn-sm" onClick={() => handleMarkPaid(b.billId)}>
-                          💰 Mark Paid
+                          <Banknote size={16} /> Mark Paid
                         </button>
                       )}
+                      <button className="btn btn-primary btn-sm" onClick={() => generateBillPDF(b)}>
+                        <Printer size={16} /> Print
+                      </button>
                     </td>
                   </tr>
                 ))}

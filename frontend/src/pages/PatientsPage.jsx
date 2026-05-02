@@ -2,6 +2,7 @@
 // Full CRUD page for managing patients
 import React, { useState, useEffect } from 'react';
 import { patientAPI } from '../services/api';
+import { Users, UserPlus, X, Plus, Save, ClipboardList, Trash2, UserSearch } from 'lucide-react';
 
 function PatientsPage() {
   // ---- STATE MANAGEMENT ----
@@ -51,13 +52,13 @@ function PatientsPage() {
     try {
       // POST /api/patients → sends form data as JSON to Spring Boot
       await patientAPI.add(form);
-      showMessage('✅ Patient added successfully!', 'success');
+      showMessage('Patient added successfully!', 'success');
       resetForm();
       setShowForm(false);
       fetchPatients(); // Refresh the list
     } catch (err) {
       const errorMsg = err.response?.data?.error || 'Failed to add patient';
-      showMessage('❌ ' + errorMsg, 'error');
+      showMessage(errorMsg, 'error');
     }
   };
 
@@ -66,10 +67,10 @@ function PatientsPage() {
     if (!window.confirm(`Delete patient ${name}? This will also delete their appointments and bills.`)) return;
     try {
       await patientAPI.delete(id);
-      showMessage('✅ Patient deleted', 'success');
+      showMessage('Patient deleted', 'success');
       fetchPatients();
     } catch (err) {
-      showMessage('❌ Failed to delete patient', 'error');
+      showMessage('Failed to delete patient', 'error');
     }
   };
 
@@ -92,7 +93,7 @@ function PatientsPage() {
 
   return (
     <div>
-      <h1 className="page-title">👤 Patient Management</h1>
+      <h1 className="page-title"><Users size={28} /> Patient Management</h1>
 
       {/* ---- STATS ---- */}
       <div className="stats-grid">
@@ -120,9 +121,11 @@ function PatientsPage() {
       {/* ---- ADD PATIENT CARD ---- */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showForm ? '20px' : '0' }}>
-          <div className="card-title">➕ {showForm ? 'Add New Patient' : 'Register a New Patient'}</div>
+          <div className="card-title">
+            <UserPlus size={20} /> {showForm ? 'Add New Patient' : 'Register a New Patient'}
+          </div>
           <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? '✕ Cancel' : '+ Add Patient'}
+            {showForm ? <><X size={18} /> Cancel</> : <><Plus size={18} /> Add Patient</>}
           </button>
         </div>
 
@@ -158,19 +161,19 @@ function PatientsPage() {
                 <input name="address" value={form.address} onChange={handleChange} placeholder="City, State" />
               </div>
             </div>
-            <button type="submit" className="btn btn-success">💾 Save Patient</button>
+            <button type="submit" className="btn btn-success"><Save size={18} /> Save Patient</button>
           </form>
         )}
       </div>
 
       {/* ---- PATIENTS TABLE ---- */}
       <div className="card">
-        <div className="card-title">📋 Registered Patients</div>
+        <div className="card-title"><ClipboardList size={20} /> Registered Patients</div>
         {loading ? (
           <div className="loading">Loading patients...</div>
         ) : patients.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">👤</div>
+            <div className="empty-icon"><UserSearch size={48} /></div>
             <p>No patients registered yet. Add one above!</p>
           </div>
         ) : (
@@ -202,7 +205,7 @@ function PatientsPage() {
                     <td>{p.address || '—'}</td>
                     <td>
                       <button className="btn btn-danger btn-sm" onClick={() => handleDelete(p.patientId, p.firstName)}>
-                        🗑 Delete
+                        <Trash2 size={16} /> Delete
                       </button>
                     </td>
                   </tr>
