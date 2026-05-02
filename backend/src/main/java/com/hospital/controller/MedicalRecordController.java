@@ -20,7 +20,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/api/medical-records")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class MedicalRecordController {
 
     @Autowired

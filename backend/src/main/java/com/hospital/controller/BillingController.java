@@ -22,7 +22,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/api/billing")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class BillingController {
 
     @Autowired
