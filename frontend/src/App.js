@@ -64,7 +64,7 @@ function AppContent() {
               <aside className="sidebar">
                 <div className="sidebar-brand">
                   <Hospital className="nav-icon" size={28} />
-                  <span>Disha Hospital</span>
+                  <span>Careberry Hospital</span>
                   <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                   </button>

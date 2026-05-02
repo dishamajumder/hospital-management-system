@@ -63,7 +63,7 @@ function MedicalRecordsPage() {
     // Header
     doc.setFontSize(22);
     doc.setTextColor(99, 102, 241); // Indigo color
-    doc.text("Disha Hospital", 105, 20, { align: "center" });
+    doc.text("Careberry Hospital", 105, 20, { align: "center" });
     
     doc.setFontSize(12);
     doc.setTextColor(100);
@@ -111,7 +111,7 @@ function MedicalRecordsPage() {
     doc.setFontSize(10);
     doc.setTextColor(150);
     doc.text("Authorized Signature: _______________________", 140, 260);
-    doc.text("Wishing you a speedy recovery - Disha Hospital.", 105, 280, { align: "center" });
+    doc.text("Wishing you a speedy recovery - Careberry Hospital.", 105, 280, { align: "center" });
     
     // Open PDF in a new tab instead of forcing a download
     // This bypasses browser download manager issues and provides a better UX

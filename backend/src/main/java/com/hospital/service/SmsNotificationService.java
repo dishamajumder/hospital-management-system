@@ -20,7 +20,7 @@ public class SmsNotificationService {
         System.out.println("--------------------------------------------------");
         System.out.println("Timestamp : " + LocalDateTime.now());
         System.out.println("To        : " + (phoneNumber != null ? phoneNumber : "+91-XXXXXXXXXX (No phone provided)"));
-        System.out.println("From      : Disha Hospital");
+        System.out.println("From      : Careberry Hospital");
         System.out.println("Message   : " + message);
         System.out.println("Status    : DELIVERED (Mock)");
         System.out.println("==================================================");

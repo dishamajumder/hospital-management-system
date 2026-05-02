@@ -69,7 +69,7 @@ public class AppointmentService {
         // Send SMS Notification
         smsNotificationService.sendSms(
                 patient.getPhone(),
-                "Hello " + patient.getFirstName() + ", your appointment at Disha Hospital is confirmed for " + savedAppointment.getAppointmentDate() + ". Status: " + savedAppointment.getStatus()
+                "Hello " + patient.getFirstName() + ", your appointment at Careberry Hospital is confirmed for " + savedAppointment.getAppointmentDate() + ". Status: " + savedAppointment.getStatus()
         );
 
         return savedAppointment;

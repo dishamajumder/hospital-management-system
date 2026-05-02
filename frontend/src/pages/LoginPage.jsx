@@ -35,7 +35,7 @@ function LoginPage() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1><Hospital size={32} color="var(--primary-color)" /> Disha Hospital Admin Console</h1>
+          <h1><Hospital size={32} color="var(--primary-color)" /> Careberry Hospital Admin Console</h1>
           <p>Please login to access the dashboard</p>
         </div>
 

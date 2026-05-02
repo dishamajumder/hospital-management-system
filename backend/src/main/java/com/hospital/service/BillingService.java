@@ -69,7 +69,7 @@ public class BillingService {
         // Send SMS
         smsNotificationService.sendSms(
                 patient.getPhone(),
-                "Hello " + patient.getFirstName() + ", a new bill of Rs." + savedBill.getAmount() + " has been generated at Disha Hospital. Status: " + savedBill.getPaymentStatus()
+                "Hello " + patient.getFirstName() + ", a new bill of Rs." + savedBill.getAmount() + " has been generated at Careberry Hospital. Status: " + savedBill.getPaymentStatus()
         );
 
         return savedBill;
@@ -89,7 +89,7 @@ public class BillingService {
         patientRepository.findById(bill.getPatientId()).ifPresent(patient -> {
             smsNotificationService.sendSms(
                     patient.getPhone(),
-                    "Hello " + patient.getFirstName() + ", your payment of Rs." + updatedBill.getAmount() + " has been received successfully. Thank you for choosing Disha Hospital."
+                    "Hello " + patient.getFirstName() + ", your payment of Rs." + updatedBill.getAmount() + " has been received successfully. Thank you for choosing Careberry Hospital."
             );
         });
 

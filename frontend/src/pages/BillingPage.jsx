@@ -55,7 +55,7 @@ function BillingPage() {
     // Header
     doc.setFontSize(22);
     doc.setTextColor(99, 102, 241); // Indigo color
-    doc.text("Disha Hospital", 105, 20, { align: "center" });
+    doc.text("Careberry Hospital", 105, 20, { align: "center" });
     
     doc.setFontSize(12);
     doc.setTextColor(100);
@@ -92,7 +92,7 @@ function BillingPage() {
     // Footer
     doc.setFontSize(10);
     doc.setTextColor(150);
-    doc.text("Thank you for choosing Disha Hospital.", 105, 280, { align: "center" });
+    doc.text("Thank you for choosing Careberry Hospital.", 105, 280, { align: "center" });
     
     // Open PDF in a new tab instead of forcing a download
     // This bypasses browser download manager issues and provides a better UX
