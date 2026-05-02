@@ -37,9 +37,7 @@ function AppointmentsPage() {
       showMsg('Patient and date are required!', 'error'); return;
     }
     try {
-      // Format datetime: append ":00" seconds if not present
-      const dateVal = form.appointmentDate.includes(':') ? form.appointmentDate + ':00' : form.appointmentDate;
-      await appointmentAPI.book({ ...form, appointmentDate: dateVal, patientId: parseInt(form.patientId), doctorId: form.doctorId ? parseInt(form.doctorId) : null });
+      await appointmentAPI.book({ ...form, patientId: parseInt(form.patientId), doctorId: form.doctorId ? parseInt(form.doctorId) : null });
       showMsg('✅ Appointment booked!', 'success');
       setForm({ patientId: '', doctorId: '', appointmentDate: '', status: 'Scheduled' });
       setShowForm(false);

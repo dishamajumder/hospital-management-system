@@ -29,7 +29,6 @@ public class Appointment {
     private Integer doctorId;
 
     // Stored in MySQL as DATETIME
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "appointment_date", nullable = false)
     private LocalDateTime appointmentDate;
 
